@@ -3,18 +3,20 @@
 <head>
 <title>Admin Dashboard</title>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 body {
     margin:0;
     font-family:'Segoe UI';
-    background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+    background:#0f172a;
+    color:white;
 }
 
 /* NAVBAR */
 .navbar {
-    background:rgba(0,0,0,0.3);
-    color:white;
-    padding:12px;
+    padding:15px;
+    background:#020617;
     display:flex;
     justify-content:space-between;
 }
@@ -22,6 +24,7 @@ body {
 .navbar a {
     color:white;
     margin-left:15px;
+    text-decoration:none;
 }
 
 /* CONTAINER */
@@ -30,30 +33,34 @@ body {
     margin:20px auto;
 }
 
-/* CARDS */
+/* CARD */
 .card {
-    background:white;
+    background:#1e293b;
     padding:20px;
     border-radius:15px;
     margin-bottom:20px;
-    box-shadow:0 8px 30px rgba(0,0,0,0.2);
 }
 
-/* REPORT BOX */
+/* REPORT GRID */
 .report {
     display:flex;
-    justify-content:space-around;
+    justify-content:space-between;
     text-align:center;
+}
+
+.report div {
+    flex:1;
 }
 
 /* TABLE */
 table {
     width:100%;
-    border-collapse:collapse;
+    border-collapse: collapse;
 }
 
-th, td {
+td, th {
     padding:10px;
+    border-bottom:1px solid #334155;
 }
 
 /* STATUS */
@@ -63,15 +70,33 @@ th, td {
     color:white;
 }
 
-.pending { background:red; }
-.progress { background:orange; }
-.resolved { background:green; }
+.pending { background:#ef4444; }
+.progress { background:#f59e0b; }
+.resolved { background:#22c55e; }
 
+/* BUTTON */
 button {
-    padding:5px 10px;
+    padding:6px 10px;
     background:#2563eb;
     color:white;
     border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+/* DELETE BUTTON */
+.delete-btn {
+    background:red;
+}
+
+/* DOWNLOAD */
+.download {
+    background:#22c55e;
+}
+
+/* CHART FIX */
+canvas {
+    max-height:220px;
 }
 </style>
 </head>
@@ -79,7 +104,7 @@ button {
 <body>
 
 <div class="navbar">
-    <div>🛠 Admin Panel</div>
+    <div>📊 Admin Report Dashboard</div>
     <div>
         <a href="/">Home</a>
         <a href="/user">User</a>
@@ -89,47 +114,74 @@ button {
 
 <div class="container">
 
-<!-- REPORT SECTION -->
-<div class="card report">
+<!-- 🔥 REPORT SECTION -->
+<div class="card">
+<h2>📋 Complaint Report Summary</h2>
+
+<div class="report">
+
 <div>
 <h2>{{ complaints|length }}</h2>
 <p>Total Complaints</p>
 </div>
 
 <div>
-<h2 style="color:red;">
+<h2 style="color:#ef4444;">
 {{ complaints | selectattr('status','equalto','Pending') | list | length }}
 </h2>
 <p>Pending</p>
 </div>
 
 <div>
-<h2 style="color:green;">
+<h2 style="color:#22c55e;">
 {{ complaints | selectattr('status','equalto','Resolved') | list | length }}
 </h2>
 <p>Resolved</p>
 </div>
+
 </div>
 
+<br>
+
+<a href="/download_report">
+<button class="download">⬇ Download Report</button>
+</a>
+
+</div>
+
+<!-- 🔥 STATUS GRAPH -->
 <div class="card">
-<h2>All Complaints</h2>
+<h3>Status Analysis</h3>
+<canvas id="statusChart"></canvas>
+</div>
+
+<!-- 🔥 CATEGORY GRAPH -->
+<div class="card">
+<h3>Category Analysis</h3>
+<canvas id="categoryChart"></canvas>
+</div>
+
+<!-- 🔥 TABLE -->
+<div class="card">
+<h2>Complaint Records</h2>
 
 <table>
 <tr>
 <th>Name</th>
-<th>Email</th>
 <th>Category</th>
-<th>Message</th>
+<th>Priority</th>
 <th>Status</th>
+<th>Days</th>
+<th>Insight</th>
 <th>Update</th>
+<th>Delete</th> <!-- ✅ NEW COLUMN -->
 </tr>
 
 {% for c in complaints %}
 <tr>
 <td>{{ c.name }}</td>
-<td>{{ c.email }}</td>
 <td>{{ c.category }}</td>
-<td>{{ c.message }}</td>
+<td>{{ c.priority }}</td>
 
 <td>
 {% if c.status=='Pending' %}
@@ -138,6 +190,16 @@ button {
 <span class="status progress">In Progress</span>
 {% else %}
 <span class="status resolved">Resolved</span>
+{% endif %}
+</td>
+
+<td>{{ c.time_taken }}</td>
+
+<td>
+{% if c.time_taken > 3 %}
+⚠️ Delay
+{% else %}
+✅ On Time
 {% endif %}
 </td>
 
@@ -152,13 +214,58 @@ button {
 </form>
 </td>
 
+<!-- ✅ DELETE BUTTON -->
+<td>
+<a href="/delete/{{ c.id }}">
+<button class="delete-btn">Delete</button>
+</a>
+</td>
+
 </tr>
 {% endfor %}
+
 </table>
 
 </div>
 
 </div>
+
+<script>
+// STATUS DATA
+let pending = {{ complaints | selectattr('status','equalto','Pending') | list | length }};
+let resolved = {{ complaints | selectattr('status','equalto','Resolved') | list | length }};
+
+// STATUS CHART
+new Chart(document.getElementById("statusChart"), {
+    type: 'doughnut',
+    data: {
+        labels: ['Pending','Resolved'],
+        datasets: [{
+            data: [pending, resolved],
+            backgroundColor: ['#ef4444','#22c55e']
+        }]
+    }
+});
+
+// CATEGORY DATA
+let categories = {};
+{% for c in complaints %}
+categories["{{ c.category }}"] = (categories["{{ c.category }}"] || 0) + 1;
+{% endfor %}
+
+// CATEGORY CHART
+new Chart(document.getElementById("categoryChart"), {
+    type: 'bar',
+    data: {
+        labels: Object.keys(categories),
+        datasets: [{
+            label: 'Complaints',
+            data: Object.values(categories),
+            backgroundColor: '#3b82f6'
+        }]
+    }
+});
+</script>
 
 </body>
 </html>
