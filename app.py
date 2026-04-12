@@ -29,16 +29,16 @@ def user():
 def add():
     cursor = db.cursor()
     cursor.execute(
-        "INSERT INTO complaints (name, email, category, message, status, priority, date) VALUES (%s, %s, %s, %s, %s, %s, NOW())",
-        (
-            request.form['name'],
-            request.form['email'],
-            request.form['category'],
-            request.form['message'],
-            "Pending",
-            request.form['priority']
-        )
+    "INSERT INTO complaints (name, email, category, message, status, priority, date) VALUES (%s,%s,%s,%s,%s,%s,NOW())",
+    (
+        request.form['name'],
+        request.form['email'],
+        request.form['category'],
+        request.form['message'],
+        "Pending",
+        request.form['priority']
     )
+)
     db.commit()
     return redirect('/user')
 
