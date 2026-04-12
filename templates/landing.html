@@ -1,69 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Complaint System</title>
+    <title>Complaint System</title>
 
-<style>
-body {
-    margin:0;
-    font-family:'Segoe UI';
-    background:linear-gradient(135deg,#667eea,#764ba2);
-    color:white;
-    text-align:center;
-}
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI';
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+        }
 
-/* HERO */
-.hero {
-    padding:100px 20px;
-}
+        /* HERO */
+        .hero {
+            padding: 100px 20px;
+        }
 
-.hero h1 {
-    font-size:50px;
-}
+        .hero h1 {
+            font-size: 50px;
+        }
 
-.hero p {
-    font-size:18px;
-    opacity:0.9;
-}
+        .hero p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
 
-/* BUTTONS */
-.btn {
-    padding:12px 20px;
-    margin:10px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    font-size:16px;
-}
+        /* BUTTONS */
+        .btn {
+            padding: 12px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
 
-.user { background:#22c55e; color:white; }
-.admin { background:#2563eb; color:white; }
+        .user { background: #22c55e; color: white; }
+        .admin { background: #2563eb; color: white; }
 
-/* DARK MODE */
-.dark {
-    background:#0f172a !important;
-}
-</style>
+        /* DARK MODE */
+        .dark {
+            background: #0f172a !important;
+        }
+    </style>
 </head>
 
 <body id="body">
 
-<div class="hero">
-<h1>📢 Complaint Management System</h1>
-<p>Track, Manage and Analyze Complaints Efficiently</p>
+    <div class="hero">
+        <h1>📢Complaint Management System</h1>
+        <p>Track, Manage and Analyze Complaints Efficiently</p>
 
-<a href="/user"><button class="btn user">User Dashboard</button></a>
-<a href="/admin"><button class="btn admin">Admin Dashboard</button></a>
+        <a href="/user"><button class="btn user">User Dashboard</button></a>
+        <a href="/admin"><button class="btn admin">Admin Dashboard</button></a>
 
-<br><br>
-<button onclick="toggleDark()">🌙 Toggle Mode</button>
-</div>
+        <br><br>
+        <button onclick="toggleDark()">🌙Toggle Mode</button>
+    </div>
 
-<script>
-function toggleDark(){
-    document.body.classList.toggle("dark");
-}
-</script>
+    <script>
+        function toggleDark() {
+            document.body.classList.toggle("dark");
+        }
+    </script>
 
 </body>
 </html>
