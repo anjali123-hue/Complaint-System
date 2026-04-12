@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>User Dashboard</title>
+
+<style>
+body {
+    margin:0;
+    font-family:'Segoe UI';
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:white;
+}
+
+/* NAVBAR */
+.navbar {
+    background:rgba(0,0,0,0.3);
+    padding:12px;
+    display:flex;
+    justify-content:space-between;
+    backdrop-filter:blur(10px);
+}
+
+.navbar a {
+    color:white;
+    margin-left:15px;
+    text-decoration:none;
+}
+
+/* CONTAINER */
+.container {
+    width:85%;
+    margin:20px auto;
+}
+
+/* GLASS CARD */
+.card {
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(10px);
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.2);
+}
+
+/* FORM */
+input, textarea {
+    width:100%;
+    padding:10px;
+    margin:5px 0;
+    border-radius:8px;
+    border:none;
+}
+
+/* BUTTON */
+button {
+    padding:10px;
+    background:#22c55e;
+    border:none;
+    border-radius:8px;
+    color:white;
+    cursor:pointer;
+}
+
+/* TABLE */
+table {
+    width:100%;
+    border-collapse:collapse;
+}
+
+td, th {
+    padding:10px;
+}
+
+tr:hover {
+    background:rgba(255,255,255,0.1);
+}
+
+/* STATUS */
+.status {
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:12px;
+}
+
+.pending { background:#ef4444; }
+.progress { background:#f59e0b; }
+.resolved { background:#22c55e; }
+
+/* DARK MODE */
+.dark {
+    background:#0f172a !important;
+}
+</style>
+</head>
+
+<body id="body">
+
+<div class="navbar">
+    <div>📢 Complaint System</div>
+    <div>
+        <a href="/">Home</a>
+        <a href="/user">User</a>
+        <a href="/admin">Admin</a>
+        <button onclick="toggleDark()">🌙</button>
+    </div>
+</div>
+
+<div class="container">
+
+<div class="card">
+<h2>Submit Complaint</h2>
+
+<form method="POST" action="/add">
+<input name="name" placeholder="Name" required>
+<input name="email" placeholder="Email" required>
+<input name="category" placeholder="Category" required>
+<textarea name="message" placeholder="Describe issue" required></textarea>
+<button>Submit</button>
+</form>
+</div>
+
+<div class="card">
+<h2>Your Complaints</h2>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Category</th>
+<th>Status</th>
+<th>Date</th>
+</tr>
+
+{% for c in complaints %}
+<tr>
+<td>{{ c.name }}</td>
+<td>{{ c.category }}</td>
+
+<td>
+{% if c.status=='Pending' %}
+<span class="status pending">Pending</span>
+{% elif c.status=='In Progress' %}
+<span class="status progress">In Progress</span>
+{% else %}
+<span class="status resolved">Resolved</span>
+{% endif %}
+</td>
+
+<td>{{ c.date }}</td>
+</tr>
+{% endfor %}
+</table>
+
+</div>
+
+</div>
+
+<script>
+function toggleDark(){
+    document.body.classList.toggle("dark");
+}
+</script>
+
+</body>
+</html>

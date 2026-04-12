@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+
+<style>
+body {
+    margin:0;
+    font-family:'Segoe UI';
+    background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+}
+
+/* NAVBAR */
+.navbar {
+    background:rgba(0,0,0,0.3);
+    color:white;
+    padding:12px;
+    display:flex;
+    justify-content:space-between;
+}
+
+.navbar a {
+    color:white;
+    margin-left:15px;
+}
+
+/* CONTAINER */
+.container {
+    width:90%;
+    margin:20px auto;
+}
+
+/* CARDS */
+.card {
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.2);
+}
+
+/* REPORT BOX */
+.report {
+    display:flex;
+    justify-content:space-around;
+    text-align:center;
+}
+
+/* TABLE */
+table {
+    width:100%;
+    border-collapse:collapse;
+}
+
+th, td {
+    padding:10px;
+}
+
+/* STATUS */
+.status {
+    padding:5px 10px;
+    border-radius:20px;
+    color:white;
+}
+
+.pending { background:red; }
+.progress { background:orange; }
+.resolved { background:green; }
+
+button {
+    padding:5px 10px;
+    background:#2563eb;
+    color:white;
+    border:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div>🛠 Admin Panel</div>
+    <div>
+        <a href="/">Home</a>
+        <a href="/user">User</a>
+        <a href="/admin">Admin</a>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- REPORT SECTION -->
+<div class="card report">
+<div>
+<h2>{{ complaints|length }}</h2>
+<p>Total Complaints</p>
+</div>
+
+<div>
+<h2 style="color:red;">
+{{ complaints | selectattr('status','equalto','Pending') | list | length }}
+</h2>
+<p>Pending</p>
+</div>
+
+<div>
+<h2 style="color:green;">
+{{ complaints | selectattr('status','equalto','Resolved') | list | length }}
+</h2>
+<p>Resolved</p>
+</div>
+</div>
+
+<div class="card">
+<h2>All Complaints</h2>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Category</th>
+<th>Message</th>
+<th>Status</th>
+<th>Update</th>
+</tr>
+
+{% for c in complaints %}
+<tr>
+<td>{{ c.name }}</td>
+<td>{{ c.email }}</td>
+<td>{{ c.category }}</td>
+<td>{{ c.message }}</td>
+
+<td>
+{% if c.status=='Pending' %}
+<span class="status pending">Pending</span>
+{% elif c.status=='In Progress' %}
+<span class="status progress">In Progress</span>
+{% else %}
+<span class="status resolved">Resolved</span>
+{% endif %}
+</td>
+
+<td>
+<form method="POST" action="/update/{{ c.id }}">
+<select name="status">
+<option>Pending</option>
+<option>In Progress</option>
+<option>Resolved</option>
+</select>
+<button>Save</button>
+</form>
+</td>
+
+</tr>
+{% endfor %}
+</table>
+
+</div>
+
+</div>
+
+</body>
+</html>
