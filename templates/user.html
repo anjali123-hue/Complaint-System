@@ -1,159 +1,167 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>User Dashboard</title>
+<title>User Dashboard</title>
 
 <style>
 body {
-    margin: 0;
-    font-family: 'Segoe UI';
-    background: #f8fafc;
+    margin:0;
+    font-family:'Segoe UI';
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    color:white;
+    transition:0.3s;
+}
+
+/* DARK MODE */
+.dark {
+    background:#0f172a !important;
 }
 
 /* NAVBAR */
 .navbar {
-    padding: 15px;
-    background: #1e293b;
-    color: white;
-    display: flex;
-    justify-content: space-between;
+    padding:12px;
+    display:flex;
+    justify-content:space-between;
+    background:rgba(0,0,0,0.3);
 }
 
 .navbar a {
-    color: white;
-    margin-left: 15px;
-    text-decoration: none;
+    color:white;
+    margin-left:15px;
+    text-decoration:none;
 }
 
 /* CONTAINER */
 .container {
-    width: 80%;
-    margin: 20px auto;
+    width:85%;
+    margin:20px auto;
 }
 
-/* FORM CARD */
+/* CARD */
 .card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    background:rgba(255,255,255,0.15);
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+    backdrop-filter:blur(10px);
 }
 
-input, select, textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #cbd5e1;
-    border-radius: 5px;
+/* FORM */
+input, textarea, select {
+    width:100%;
+    padding:10px;
+    margin:5px 0;
+    border-radius:8px;
+    border:none;
 }
 
+/* BUTTON */
 button {
-    width: 100%;
-    padding: 10px;
-    background: #22c55e;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    padding:10px;
+    background:#22c55e;
+    border:none;
+    border-radius:8px;
+    color:white;
+    cursor:pointer;
 }
 
 /* TABLE */
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+    width:100%;
 }
 
-th, td {
-    padding: 12px;
-    border-bottom: 1px solid #e2e8f0;
-    text-align: left;
+td, th {
+    padding:10px;
 }
 
-th {
-    background: #f1f5f9;
-}
-
-/* STATUS TAGS */
+/* STATUS */
 .status {
-    padding: 5px 10px;
-    border-radius: 15px;
-    font-size: 12px;
+    padding:5px 10px;
+    border-radius:20px;
 }
 
-.pending { background: #fee2e2; color: #ef4444; }
-.progress { background: #fef3c7; color: #f59e0b; }
-.resolved { background: #dcfce7; color: #22c55e; }
+.pending { background:red; }
+.progress { background:orange; }
+.resolved { background:green; }
 </style>
 </head>
 
-<body>
+<body id="body">
 
-    <div class="navbar">
-        <div>👤User Complaint Portal</div>
-        <div>
-            <a href="/">Home</a>
-            <a href="/user">User</a>
-            <a href="/admin">Admin</a>
-        </div>
+<div class="navbar">
+    <div>📢 Complaint System</div>
+    <div>
+        <a href="/">Home</a>
+        <a href="/user">User</a>
+        <a href="/admin">Admin</a>
+        <button onclick="toggleDark()">🌙</button>
     </div>
+</div>
 
-    <div class="container">
+<div class="container">
 
-        <div class="card">
-            <h2>Submit a Complaint</h2>
-            <form method="POST" action="/add">
-                <input type="text" name="name" placeholder="Your Name" required>
-                <input type="email" name="email" placeholder="Your Email" required>
-                
-                <select name="category">
-                    <option>Technical Issue</option>
-                    <option>Billing</option>
-                    <option>General Feedback</option>
-                    <option>Other</option>
-                </select>
+<div class="card">
+<h2>Submit Complaint</h2>
 
-                <select name="priority">
-                    <option>Low</option>
-                    <option>Medium</option>
-                    <option>High</option>
-                </select>
+<form method="POST" action="/add">
+<input name="name" placeholder="Name" required>
+<input name="email" placeholder="Email" required>
+<input name="category" placeholder="Category" required>
 
-                <textarea name="message" placeholder="Describe your issue..." required></textarea>
-                <button type="submit">Submit Complaint</button>
-            </form>
-        </div>
+<select name="priority">
+<option>Low</option>
+<option selected>Medium</option>
+<option>High</option>
+</select>
 
-        <div class="card">
-            <h2>Recent Complaints</h2>
-            <table>
-                <tr>
-                    <th>Category</th>
-                    <th>Message</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                </tr>
-                {% for c in complaints %}
-                <tr>
-                    <td>{{ c.category }}</td>
-                    <td>{{ c.message }}</td>
-                    <td>
-                        {% if c.status == 'Pending' %}
-                            <span class="status pending">Pending</span>
-                        {% elif c.status == 'In Progress' %}
-                            <span class="status progress">In Progress</span>
-                        {% else %}
-                            <span class="status resolved">Resolved</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ c.date }}</td>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
+<textarea name="message" placeholder="Describe issue" required></textarea>
+<button>Submit</button>
+</form>
+</div>
 
-    </div>
+<div class="card">
+<h2>Your Complaints</h2>
+
+<table>
+<tr>
+<th>Name</th>
+<th>Category</th>
+<th>Priority</th>
+<th>Status</th>
+<th>Date</th>
+</tr>
+
+{% for c in complaints %}
+<tr>
+<td>{{ c.name }}</td>
+<td>{{ c.category }}</td>
+<td>{{ c.priority }}</td>
+
+<td>
+{% if c.status=='Pending' %}
+<span class="status pending">Pending</span>
+{% elif c.status=='In Progress' %}
+<span class="status progress">In Progress</span>
+{% else %}
+<span class="status resolved">Resolved</span>
+{% endif %}
+</td>
+
+<td>{{ c.date }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+function toggleDark(){
+    document.body.classList.toggle("dark");
+}
+</script>
 
 </body>
 </html>
