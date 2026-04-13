@@ -5,7 +5,6 @@ import os
 
 app = Flask(__name__)
 
-# Database connection function (Render safe)
 def get_db():
     return mysql.connector.connect(
         host="caboose.proxy.rlwy.net",
@@ -34,10 +33,11 @@ def add():
     cursor = db.cursor()
 
     cursor.execute(
-        "INSERT INTO complaints (name, email, message, status, priority, date) VALUES (%s,%s,%s,%s,%s,NOW())",
+        "INSERT INTO complaints (name, email, category, message, status, priority, date) VALUES (%s,%s,%s,%s,%s,%s,NOW())",
         (
             request.form['name'],
             request.form['email'],
+            request.form['category'],
             request.form['message'],
             "Pending",
             request.form['priority']
@@ -56,7 +56,6 @@ def admin():
     complaints = cursor.fetchall()
     db.close()
 
-    # SAFE TIME CALCULATION
     for c in complaints:
         try:
             if c['resolved_date']:
@@ -94,13 +93,13 @@ def update(id):
 def download_report():
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT name, email, message, status, priority, date FROM complaints")
+    cursor.execute("SELECT name, email, category, message, status, priority, date FROM complaints")
     data = cursor.fetchall()
     db.close()
 
-    csv = "Name, Email, Message, Status, Priority, Date\n"
+    csv = "Name, Email, Category, Message, Status, Priority, Date\n"
     for row in data:
-        csv += f"{row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]}, {row[5]}\n"
+        csv += f"{row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]}, {row[5]}, {row[6]}\n"
 
     return Response(
         csv,
